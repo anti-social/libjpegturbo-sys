@@ -2,4 +2,4 @@
 
 This was shamelessly stolen from Pornel, who is way better at C and Rust than I am.
 
-See [crates.io](https://crates.io/crates/mozjpeg-sys).
+See [crates.io](https://crates.io/crates/libjpegturbo-sys).

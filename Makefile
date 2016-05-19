@@ -1,23 +1,23 @@
 OUT_DIR?=/tmp
-MOZDIR=$(OUT_DIR)/mozjpeg
+LIBJPEGTURBODIR=$(OUT_DIR)/libjpegturbo
 CONFIGOPTIONS=--host="$(HOST)" --build="$(TARGET)" --enable-static --disable-shared --without-arith-enc --without-arith-dec --without-java --without-turbojpeg
 
 all: $(OUT_DIR)/lib/libjpeg.a
 	@echo "cargo:rustc-flags=-l static=jpeg -L native=$(OUT_DIR)/lib"
 
-$(OUT_DIR)/lib/libjpeg.a: $(MOZDIR)/Makefile
-	$(MAKE) -C $(MOZDIR) install
+$(OUT_DIR)/lib/libjpeg.a: $(LIBJPEGTURBODIR)/Makefile
+	$(MAKE) -C $(LIBJPEGTURBODIR) install
 
-$(MOZDIR)/Makefile: $(MOZDIR)/configure
-	( cd $(MOZDIR) && ./configure --prefix="$(OUT_DIR)" $(CONFIGOPTIONS) )
+$(LIBJPEGTURBODIR)/Makefile: $(LIBJPEGTURBODIR)/configure
+	( cd $(LIBJPEGTURBODIR) && ./configure --prefix="$(OUT_DIR)" $(CONFIGOPTIONS) )
 
-$(MOZDIR)/configure: $(MOZDIR)/configure.ac
-	( cd $(MOZDIR) && autoreconf -i ) && touch "$@"
+$(LIBJPEGTURBODIR)/configure: $(LIBJPEGTURBODIR)/configure.ac
+	( cd $(LIBJPEGTURBODIR) && autoreconf -i ) && touch "$@"
 
-$(MOZDIR)/configure.ac:
-	git clone --depth=1 https://github.com/mozilla/mozjpeg.git "$(MOZDIR)"
+$(LIBJPEGTURBODIR)/configure.ac:
+	git clone --depth=1 https://github.com/libjpeg-turbo/libjpeg-turbo.git "$(LIBJPEGTURBODIR)"
 
 clean:
-	-rm -rf $(MOZDIR)
+	-rm -rf $(LIBJPEGTURBODIR)
 
 .PHONY: all clean

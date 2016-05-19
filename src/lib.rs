@@ -10,10 +10,6 @@ use ::std::option::Option;
 use ::std::default::Default;
 
 pub use J_COLOR_SPACE::*;
-pub use J_BOOLEAN_PARAM::*;
-pub use J_FLOAT_PARAM::*;
-pub use J_INT_PARAM::*;
-pub use JINT_COMPRESS_PROFILE_VALUE::*;
 pub use J_DCT_METHOD::JDCT_ISLOW as JDCT_DEFAULT;
 pub use J_DCT_METHOD::JDCT_IFAST as JDCT_FASTEST;
 
@@ -189,61 +185,6 @@ pub enum J_DITHER_MODE {
     JDITHER_NONE = 0,
     JDITHER_ORDERED = 1,
     JDITHER_FS = 2,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-/// These 32-bit GUIDs and the corresponding `jpeg_*_get_*_param()`
-/// `jpeg_*_set_*_param()` functions allow for extending the libjpeg API without
-/// breaking backward ABI compatibility.  The actual parameters are stored in
-/// the opaque `jpeg_comp_master` and `jpeg_decomp_master` structs.
-pub enum J_BOOLEAN_PARAM {
-    /// TRUE=optimize progressive coding scans
-    JBOOLEAN_OPTIMIZE_SCANS = 0x680C061E,
-    /// TRUE=use trellis quantization
-    JBOOLEAN_TRELLIS_QUANT = 0xC5122033,
-    /// TRUE=use trellis quant for DC coefficient
-    JBOOLEAN_TRELLIS_QUANT_DC = 0x339D4C0C,
-    /// TRUE=optimize for sequences of EOB
-    JBOOLEAN_TRELLIS_EOB_OPT = 0xD7F73780,
-    /// TRUE=use lambda weighting table
-    JBOOLEAN_USE_LAMBDA_WEIGHT_TBL = 0x339DB65F,
-    /// TRUE=use scans in trellis optimization
-    JBOOLEAN_USE_SCANS_IN_TRELLIS = 0xFD841435,
-    /// TRUE=optimize quant table in trellis loop
-    JBOOLEAN_TRELLIS_Q_OPT = 0xE12AE269,
-    /// TRUE=preprocess input to reduce ringing of edges on white background
-    JBOOLEAN_OVERSHOOT_DERINGING = 0x3F4BBBF9,
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum J_FLOAT_PARAM {
-    JFLOAT_LAMBDA_LOG_SCALE1 = 0x5B61A599,
-    JFLOAT_LAMBDA_LOG_SCALE2 = 0xB9BBAE03,
-    JFLOAT_TRELLIS_DELTA_DC_WEIGHT = 0x13775453
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum J_INT_PARAM {
-  /// compression profile
-  JINT_COMPRESS_PROFILE = 0xE9918625,
-  /// splitting point for frequency in trellis quantization
-  JINT_TRELLIS_FREQ_SPLIT = 0x6FAFF127,
-  /// number of trellis loops
-  JINT_TRELLIS_NUM_LOOPS = 0xB63EBF39,
-  /// base quantization table index
-  JINT_BASE_QUANT_TBL_IDX = 0x44492AB1,
-  /// DC scan optimization mode
-  JINT_DC_SCAN_OPT_MODE = 0x0BE7AD3C
-}
-
-#[repr(C)]
-#[derive(Copy, Clone, Eq, PartialEq, Debug)]
-pub enum JINT_COMPRESS_PROFILE_VALUE {
-  JCP_MAX_COMPRESSION = 0x5D083AAD, /* best compression ratio (progressive, all mozjpeg extensions) */
-  JCP_FASTEST = 0x2AEA5CB4 /* libjpeg[-turbo] defaults (baseline, no mozjpeg extensions) */
 }
 
 #[repr(C)]
@@ -689,18 +630,6 @@ extern "C" {
     pub fn jpeg_abort_compress(cinfo: &mut jpeg_compress_struct);
     pub fn jpeg_abort_decompress(cinfo: &mut jpeg_decompress_struct);
     pub fn jpeg_resync_to_restart(cinfo: &mut jpeg_decompress_struct, desired: c_int) -> boolean;
-    pub fn jpeg_c_bool_param_supported(cinfo: &jpeg_compress_struct,
-                                   param: J_BOOLEAN_PARAM) -> boolean;
-    pub fn jpeg_c_set_bool_param(cinfo: &mut jpeg_compress_struct,
-                             param: J_BOOLEAN_PARAM, value: boolean);
-    pub fn jpeg_c_get_bool_param(cinfo: &jpeg_compress_struct,
-                             param: J_BOOLEAN_PARAM) -> boolean;
-    pub fn jpeg_c_float_param_supported(cinfo: &jpeg_compress_struct, param: J_FLOAT_PARAM) -> boolean;
-    pub fn jpeg_c_set_float_param(cinfo: &mut jpeg_compress_struct, param: J_FLOAT_PARAM, value: c_float);
-    pub fn jpeg_c_get_float_param(cinfo: &jpeg_compress_struct, param: J_FLOAT_PARAM) -> c_float;
-    pub fn jpeg_c_int_param_supported(cinfo: &jpeg_compress_struct, param: J_INT_PARAM) -> boolean;
-    pub fn jpeg_c_set_int_param(cinfo: &mut jpeg_compress_struct, param: J_INT_PARAM, value: c_int);
-    pub fn jpeg_c_get_int_param(cinfo: &jpeg_compress_struct, param: J_INT_PARAM) -> c_int;
 }
 
 #[test]
@@ -724,9 +653,6 @@ pub fn try_compress() {
         let mut cinfo: jpeg_compress_struct = mem::zeroed();
         let size = mem::size_of_val(&cinfo) as size_t;
         cinfo.common.err = &mut err;
-        if 0 == jpeg_c_bool_param_supported(&cinfo, JBOOLEAN_TRELLIS_QUANT) {
-            panic!("Not linked to mozjpeg?");
-        }
         jpeg_CreateCompress(&mut cinfo, JPEG_LIB_VERSION, size);
         jpeg_destroy_compress(&mut cinfo);
     }

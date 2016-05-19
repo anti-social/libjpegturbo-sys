@@ -1,17 +1,17 @@
 [package]
-name = "mozjpeg-sys"
-description = "FFI bindings for mozjpeg.\n\nMozJPEG is automatically fetched from git master and linked statically. Requires autotools and nasm."
-version = "0.2.0"
-authors = ["Kornel <pornel@pornel.net>"]
-keywords = ["JPEG", "mozjpeg", "libjpeg", "static"]
-repository = "https://github.com/pornel/mozjpeg-sys.git"
-homepage = "https://github.com/pornel/mozjpeg-sys"
+name = "libjpegturbo-sys"
+description = "FFI bindings for libjpeg-turbo.\n\nLibjpeg-turbo is automatically fetched from git master and linked statically. Requires autotools and nasm."
+version = "0.0.1"
+authors = ["Kornel <pornel@pornel.net>", "Dangermike <dangermike@gmail.com>"]
+keywords = ["JPEG", "libjpeg-turbo", "libjpeg", "static"]
+repository = "https://github.com/dangermike/libjpegturbo-sys.git"
+homepage = "https://github.com/dangermike/libjpegturbo-sys"
 license = "IJG"
 build = "src/build.rs"
 links = "jpeg"
 
 [lib]
-name = "mozjpeg_sys"
+name = "libjpegturbo_sys"
 
 [dependencies]
-libc = "*"
+libc = "0.2.11"
